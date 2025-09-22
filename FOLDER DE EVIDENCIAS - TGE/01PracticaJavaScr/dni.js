@@ -13,3 +13,10 @@ var numero = document.getElementById('dni_numero').value;
         return;
     }
    var letraCalculada = letras[numero % 23];
+ if (letraCalculada !== letraUsuario) {
+        mensaje.textContent = 'La letra indicada no es correcta.';
+        mensaje.style.color = 'orange';
+    } else {
+        mensaje.textContent = 'El número y la letra de DNI son correctos.';
+        mensaje.style.color = 'green';
+    }
