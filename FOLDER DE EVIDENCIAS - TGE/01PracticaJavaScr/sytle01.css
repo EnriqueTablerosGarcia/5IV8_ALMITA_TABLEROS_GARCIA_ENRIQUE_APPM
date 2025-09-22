@@ -1,3 +1,16 @@
+body {
+	background: #fff;
+	color: #222;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+h1, h2, h3 {
+	color: #800020;
+	margin-bottom: 0.5em;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+}
 
 
 
