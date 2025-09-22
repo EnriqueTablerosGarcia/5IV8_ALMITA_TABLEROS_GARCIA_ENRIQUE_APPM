@@ -9,7 +9,15 @@
 <body>
     <div class="card">
         <h1>Validador de DNI</h1>
+        <label for="dni_numero">Número de DNI:</label><br>
+        <input type="text" id="dni_numero" maxlength="8" required pattern="\\d*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><br>
+        <label for="dni_letra">Letra:</label><br>
+        <input type="text" id="dni_letra" maxlength="1" required style="text-transform:uppercase"><br>
+        <button class="btn" onclick="validarDNI()">Validar</button>
+        <p id="mensaje"></p>
     </div>
+    <script src="dni.js"></script>
+
 
 
 </body>
