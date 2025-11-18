@@ -1,0 +1,184 @@
+// Importación de dependencias necesarias
+import React, { useState } from 'react'; // Importa React y el hook useState para manejar estados internos del componente
+import { 
+  SafeAreaView, // Evita que el contenido se superponga con las zonas seguras del dispositivo
+  View, // Contenedor genérico para agrupar elementos
+  Text, // Permite mostrar texto en pantalla
+  TextInput, // Campo de texto editable (para ingresar usuario y contraseña)
+  TouchableOpacity, // Botón táctil que responde al presionarlo
+  Image, // Muestra imágenes (como la foto de perfil)
+  StyleSheet, // Define los estilos visuales de los componentes
+  Alert // Muestra mensajes emergentes tipo alerta
+} from 'react-native';
+
+// Importa la librería Expo ImagePicker para seleccionar imágenes desde la galería del dispositivo
+import * as ImagePicker from 'expo-image-picker';
+
+// Componente principal de la aplicación
+export default function App() {
+
+  // ==============================
+  // 🔹 DECLARACIÓN DE ESTADOS
+  // ==============================
+  const [user, setUser] = useState(''); // Guarda el nombre del usuario que se escribe en el input
+  const [pass, setPass] = useState(''); // Guarda la contraseña ingresada
+  const [imageUri, setImageUri] = useState(null); // Guarda la dirección (URI) de la imagen seleccionada
+  const [loggedIn, setLoggedIn] = useState(false); // Controla si el usuario ha iniciado sesión o no
+
+  // ==============================
+  // 🔹 FUNCIÓN: validarLogin()
+  // ==============================
+  // Esta función verifica si el usuario y la contraseña coinciden con los valores correctos.
+  const validarLogin = () => {
+    const validUser = 'admin'; // Usuario correcto
+    const validPass = '1234';  // Contraseña correcta
+
+    // Verifica si los datos ingresados son correctos
+    if (user === validUser && pass === validPass) {
+      Alert.alert('Correcto', 'Inicio de sesión exitoso'); // Muestra mensaje de éxito
+      setLoggedIn(true); // Cambia el estado a "logueado" para mostrar la pantalla de perfil
+    } else {
+      Alert.alert('Error', 'Usuario o contraseña incorrectos'); // Muestra mensaje de error
+    }
+  };
+
+  // ==============================
+  // 🔹 FUNCIÓN: cambiarImagen()
+  // ==============================
+  // Esta función permite cambiar la foto de perfil al seleccionar una imagen desde la galería.
+  const cambiarImagen = async () => {
+    // Solicita permiso para acceder a la galería del dispositivo
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    // Si el usuario no da permiso, se muestra una alerta y se detiene el proceso
+    if (status !== 'granted') {
+      Alert.alert('Permiso denegado', 'Se necesita acceso a las imágenes');
+      return;
+    }
+
+    // Abre la galería del dispositivo para que el usuario elija una imagen
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Solo permite imágenes (no videos)
+      allowsEditing: true, // Permite recortar o editar la imagen
+      quality: 0.8, // Define la calidad de la imagen (0.8 = 80%)
+    });
+
+    // Si el usuario no canceló y seleccionó una imagen, se guarda su URI
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  // ==============================
+  // 🔹 RETORNO VISUAL (RENDER)
+  // ==============================
+  // Aquí se define lo que se mostrará en pantalla dependiendo del estado "loggedIn"
+  return (
+    <SafeAreaView style={styles.container}>
+      
+      {/* Si el usuario NO ha iniciado sesión, se muestra el formulario de login */}
+      {!loggedIn ? (
+        <View style={styles.box}>
+          <Text style={styles.title}>Iniciar Sesión</Text>
+
+          {/* Campo para escribir el nombre de usuario */}
+          <TextInput
+            placeholder="Usuario"
+            style={styles.input}
+            value={user} // Vinculado al estado "user"
+            onChangeText={setUser} // Actualiza el estado cada vez que se escribe
+          />
+
+          {/* Campo para escribir la contraseña */}
+          <TextInput
+            placeholder="Contraseña"
+            style={styles.input}
+            value={pass} // Vinculado al estado "pass"
+            onChangeText={setPass} // Actualiza el estado con lo que se escribe
+            secureTextEntry // Oculta el texto para que no se vea la contraseña
+          />
+
+          {/* Botón para validar el inicio de sesión */}
+          <TouchableOpacity style={styles.button} onPress={validarLogin}>
+            <Text style={styles.btnText}>Entrar</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        // Si el usuario ya inició sesión, se muestra la pantalla de bienvenida con la foto
+        <View style={styles.box}>
+          <Text style={styles.title}>Bienvenido carnal pulpo {user}</Text>
+
+          {/* Imagen de perfil: al presionarla, permite cambiarla */}
+          <TouchableOpacity onPress={cambiarImagen}>
+            <Image
+              source={{
+                uri: imageUri || // Si ya hay una imagen seleccionada, se muestra
+                  // Si no, se usa una imagen predeterminada
+                  'https://static.vecteezy.com/system/resources/previews/005/005/840/non_2x/user-icon-in-trendy-flat-style-isolated-on-grey-background-user-symbol-for-your-web-site-design-logo-app-ui-illustration-eps10-free-vector.jpg'
+              }}
+              style={styles.image} // Aplica los estilos definidos
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+    </SafeAreaView>
+  );
+}
+
+// ==============================
+// 🔹 SECCIÓN DE ESTILOS
+// ==============================
+// Aquí se definen los estilos visuales de cada componente.
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, // Ocupa toda la pantalla
+    justifyContent: 'center', // Centra los elementos verticalmente
+    alignItems: 'center', // Centra los elementos horizontalmente
+    backgroundColor: '#522e2eff', // Color de fondo general
+  },
+  box: {
+    width: '80%', // Ancho del contenedor
+    backgroundColor: 'white', // Fondo blanco del cuadro
+    padding: 20, // Espaciado interno
+    borderRadius: 10, // Bordes redondeados
+    alignItems: 'center', // Centra los elementos dentro
+    elevation: 3, // Agrega sombra en Android
+  },
+  title: {
+    fontSize: 20, // Tamaño de letra
+    marginBottom: 20, // Espacio debajo del título
+  },
+  input: {
+    width: '100%',
+    borderWidth: 1, // Borde visible
+    borderColor: '#ccc', // Color del borde gris claro
+    borderRadius: 5, // Bordes redondeados
+    padding: 10, // Espacio interno
+    marginBottom: 10, // Espacio entre campos
+  },
+  button: {
+    backgroundColor: '#007bff', // Color azul del botón
+    paddingVertical: 10, // Altura del botón
+    borderRadius: 5, // Bordes redondeados
+    width: '100%', // Ancho total
+    alignItems: 'center', // Centra el texto dentro del botón
+  },
+  btnText: {
+    color: '#fff', // Texto blanco
+  },
+  image: {
+    width: 120, // Ancho de la imagen
+    height: 120, // Alto de la imagen
+    borderRadius: 60, // Forma circular
+    marginTop: 10, // Espacio superior
+  },
+  imagePlaceholder: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#e0e0e0', // Fondo gris si no hay imagen
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+});

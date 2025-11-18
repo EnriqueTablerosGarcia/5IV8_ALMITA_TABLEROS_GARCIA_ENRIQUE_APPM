@@ -61,7 +61,7 @@ export default function App() {
         </View>
       ) : (
         <View style={styles.box}>
-          <Text style={styles.title}>Bienvenido {user}</Text>
+          <Text style={styles.title}>Bienvenido carnal pulpo{user}</Text>
           <TouchableOpacity onPress={cambiarImagen}>
             <Image
               source={{ uri: imageUri || 'https://static.vecteezy.com/system/resources/previews/005/005/840/non_2x/user-icon-in-trendy-flat-style-isolated-on-grey-background-user-symbol-for-your-web-site-design-logo-app-ui-illustration-eps10-free-vector.jpg' }}
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#522e2eff',
   },
   box: {
     width: '80%',
